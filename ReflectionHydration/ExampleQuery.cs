@@ -9,7 +9,8 @@ public class ExampleQuery
 
     public ExampleQuery()
     {
-        _driver = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "password"));
+        _driver = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "password"),
+            cfg => cfg.WithLogger(new Neo4jSerilogger()));
     }
 
     public async Task<List<IRecord>> GetRecordsAsync()
@@ -25,14 +26,11 @@ public class ExampleQuery
             RETURN movie, relationship, person
             """;
 
-        await using var session = _driver.AsyncSession();
+        var queryExecution = await _driver
+            .ExecutableQuery(query)
+            .ExecuteAsync();
 
-        return await session.ExecuteReadAsync(
-            async tx =>
-            {
-                var cursor = await tx.RunAsync(query);
-                _cache = await cursor.ToListAsync();
-                return _cache;
-            });
+        return queryExecution.Result.ToList();
+
     }
 }

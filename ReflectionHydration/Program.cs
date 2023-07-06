@@ -41,11 +41,11 @@ public class Program
     {
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
-            .MinimumLevel.Information()
+            .MinimumLevel.Debug()
             .CreateLogger();
 
         var services = new ServiceCollection()
-            .AddTransient<ExampleQuery>()
+            .AddSingleton<ExampleQuery>()
             .AddLogging(l => l.AddSerilog())
             .AddTransient<ISetterMapFactory, SetterMapFactory>()
             .AddTransient<IEntityToObjectConverter, EntityToObjectConverter>()
@@ -69,25 +69,23 @@ public class Program
 
     public static async Task Main()
     {
-        var summary = BenchmarkRunner.Run<Benchmarks>();
+        IServiceProvider serviceProvider = BuildServices();
+        var demoStages = serviceProvider.GetRequiredService<IEnumerable<IDemoStage>>().ToList();
+        int stage = 0;
+        do
+        {
+            string input;
+            do
+            {
+                Console.Write("Stage: ");
+                input = Console.ReadLine()!;
+            } while (!(int.TryParse(input, out stage) && stage is >= 0 and <= 5));
 
-        // IServiceProvider serviceProvider = BuildServices();
-        // var demoStages = serviceProvider.GetRequiredService<IEnumerable<IDemoStage>>().ToList();
-        // int stage = 0;
-        // do
-        // {
-        //     string input;
-        //     do
-        //     {
-        //         Console.Write("Stage: ");
-        //         input = Console.ReadLine()!;
-        //     } while (!(int.TryParse(input, out stage) && stage is >= 0 and <= 5));
-        //
-        //     if (stage != 0)
-        //     {
-        //         var demoStage = demoStages.First(d => d.Stage == stage);
-        //         await demoStage.RunAsync();
-        //     }
-        // } while (stage != 0);
+            if (stage != 0)
+            {
+                var demoStage = demoStages.First(d => d.Stage == stage);
+                await demoStage.RunAsync();
+            }
+        } while (stage != 0);
     }
 }
