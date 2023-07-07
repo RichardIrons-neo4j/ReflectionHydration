@@ -5,7 +5,7 @@ using TelemetryTest;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .MinimumLevel.Information()
+    .MinimumLevel.Debug()
     .CreateLogger();
 
 var query = new ExampleQuery();
@@ -21,20 +21,17 @@ for (int x = 0; x < 4; x++)
 
     for (int i = 0; i < 20; i++)
     {
-        var exeType = Random.Shared.Next(0, 4);
-        var type = exeTypes[exeType];
-        IncremementCounter(metrics, type);
+        var exeType = exeTypes[Random.Shared.Next(0, 4)];
+        IncremementCounter(metrics, exeType);
         tasks.Add(
             exeType switch
             {
-                0 => query.GetRecordsUsingQueryExecuteAsync(), // exe
-                1 => query.GetRecordsUsingSessionRunAsync(), // run
-                2 => query.GetRecordsUsingTransactionFunctionAsync(), // fn
-                3 => query.GetRecordsUsingUnmanagedTransaction(), // tx
+                "exe" => query.GetRecordsUsingQueryExecuteAsync(),
+                "run" => query.GetRecordsUsingSessionRunAsync(),
+                "fn" => query.GetRecordsUsingTransactionFunctionAsync(),
+                "tx" => query.GetRecordsUsingUnmanagedTransaction(),
                 _ => throw new NotImplementedException()
             });
-
-        await Task.WhenAll(tasks);
     }
 
     await Task.WhenAll(tasks);
