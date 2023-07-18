@@ -1,11 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Serilog;
+using Serilog.Templates;
 using TelemetryTest;
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
     .MinimumLevel.Debug()
+    .Filter.ByIncludingOnly("@m like '%TELEMETRY%'")
+    .WriteTo.Console(new ExpressionTemplate("{@m}\n"))
     .CreateLogger();
 
 var query = new ExampleQuery();

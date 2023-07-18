@@ -72,7 +72,7 @@ public class Program
         IServiceProvider serviceProvider = BuildServices();
         var demoStages = serviceProvider.GetRequiredService<IEnumerable<IDemoStage>>().ToList();
         int stage = 0;
-        do
+        while(true)
         {
             string input;
             do
@@ -81,11 +81,13 @@ public class Program
                 input = Console.ReadLine()!;
             } while (!(int.TryParse(input, out stage) && stage is >= 0 and <= 5));
 
-            if (stage != 0)
+            if (stage == 0)
             {
-                var demoStage = demoStages.First(d => d.Stage == stage);
-                await demoStage.RunAsync();
+                break;
             }
-        } while (stage != 0);
+
+            var demoStage = demoStages.First(d => d.Stage == stage);
+            await demoStage.RunAsync();
+        };
     }
 }

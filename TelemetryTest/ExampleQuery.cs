@@ -11,7 +11,7 @@ public class ExampleQuery
     public ExampleQuery()
     {
         _driver = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "password"),
-            cfg => cfg.WithLogger(new Neo4jSerilogger()));
+            cfg => cfg.WithLogger(new Neo4jSerilogger<ExampleQuery>()));
     }
 
     public async Task<List<IRecord>> GetRecordsUsingQueryExecuteAsync()

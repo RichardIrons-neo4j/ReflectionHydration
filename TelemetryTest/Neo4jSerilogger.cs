@@ -21,47 +21,47 @@ using ILogger = Neo4j.Driver.ILogger;
 
 namespace TelemetryTest;
 
-public class Neo4jSerilogger : ILogger
+public class Neo4jSerilogger<T> : ILogger
 {
     /// <inheritdoc />
     public void Error(Exception cause, string message, params object[] args)
     {
-        Log.Logger.Error(cause, message, args);
+        Log.ForContext<T>().Error(cause, message, args);
     }
 
     /// <inheritdoc />
     public void Warn(Exception cause, string message, params object[] args)
     {
-        Log.Logger.Warning(cause, message, args);
+        Log.ForContext<T>().Warning(cause, message, args);
     }
 
     /// <inheritdoc />
     public void Info(string message, params object[] args)
     {
-        Log.Logger.Information(message, args);
+        Log.ForContext<T>().Information(message, args);
     }
 
     /// <inheritdoc />
     public void Debug(string message, params object[] args)
     {
-        Log.Logger.Debug(message, args);
+        Log.ForContext<T>().Debug(message, args);
     }
 
     /// <inheritdoc />
     public void Trace(string message, params object[] args)
     {
-        Log.Logger.Verbose(message, args);
+        Log.ForContext<T>().Verbose(message, args);
     }
 
     /// <inheritdoc />
     public bool IsTraceEnabled()
     {
-        return Log.Logger.IsEnabled(LogEventLevel.Verbose);
+        return Log.ForContext<T>().IsEnabled(LogEventLevel.Verbose);
     }
 
     /// <inheritdoc />
     public bool IsDebugEnabled()
     {
-        return Log.Logger.IsEnabled(LogEventLevel.Debug);
+        return Log.ForContext<T>().IsEnabled(LogEventLevel.Debug);
     }
 }

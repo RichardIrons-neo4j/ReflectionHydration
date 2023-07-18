@@ -5,7 +5,7 @@ namespace ReflectionHydration;
 public class ExampleQuery
 {
     private readonly IDriver _driver;
-    private List<IRecord>? _cache;
+    // private List<IRecord>? _cache;
 
     public ExampleQuery()
     {
@@ -15,10 +15,10 @@ public class ExampleQuery
 
     public async Task<List<IRecord>> GetRecordsAsync()
     {
-        if (_cache is not null)
-        {
-            return _cache;
-        }
+        // if (_cache is not null)
+        // {
+        //     return _cache;
+        // }
 
         const string query = """
             MATCH (movie:Movie)<-[relationship:ACTED_IN|DIRECTED]-(person:Person)
@@ -31,6 +31,5 @@ public class ExampleQuery
             .ExecuteAsync();
 
         return queryExecution.Result.ToList();
-
     }
 }
